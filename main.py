@@ -6,6 +6,7 @@ import json
 
 
 def bind(val, func):
+    """Apply func to val only if val is not None"""
     if val is None:
         return val
     return func(val)
@@ -54,6 +55,9 @@ class Task:
                     total_time = subtime
 
     def simple(self):
+        """Return a dictionary representing the same information as the Task
+        object, but only containing json compatible objects.
+        """
         return {
             'name': self.name,
             'description': self.description,
