@@ -5,6 +5,12 @@ import datetime
 import json
 
 
+def bind(val, func):
+    if val is None:
+        return val
+    return func(val)
+
+
 class Task:
     """A node of the hierarchal task structure, representing a task. Contains a
     name, description, time to complete the given task (excluding any subtasks),
@@ -48,12 +54,14 @@ class Task:
                     total_time = subtime
 
     def simple(self):
-        obj = {
-                'name': self.name,
-                'description': self.description,
-                'completion_time': self.completion_time,
-
-                }
+        return {
+            'name': self.name,
+            'description': self.description,
+            'complete': self.complete,
+            'completion_time': bind(self.completion_time, datetime.timedelta.total_seconds),
+            'due_date': bind(self.due_date, datetime.datetime.isoformat),
+            'subtasks': [task.simple() for task in self.subtasks]
+            }
 
 
 def main():
