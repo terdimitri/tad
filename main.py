@@ -4,11 +4,12 @@ import argparse
 import json
 
 
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['add', 'remove'])
+    actions = parser.add_subparsers()
+    add_action = actions.add_parser('add')
+    add_action.add_argument('name')
+    fin_action = actions.add_parser('fin')
 
     args = parser.parse_args()
     print(args)
