@@ -22,8 +22,11 @@ def main():
     add_action.add_argument('--due-date', help='The due date of the task in iso format')
     add_action.add_argument('--completion-time', help='The expected time to complete the task')
 
-    fin_action = actions.add_parser('fin', help='finish a task')
-    fin_action.add_argument('task')
+    comp_action = actions.add_parser('comp', help='complete a task')
+    comp_action.add_argument('task')
+
+    edit_action = actions.add_parser('edit', help='change an attribute of the current task')
+    edit_action.add_argument('attribute', help='the attibute you would like to change')
 
     args = parser.parse_args()
     print(args)
