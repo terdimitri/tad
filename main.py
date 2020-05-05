@@ -12,9 +12,7 @@ def main():
     actions = parser.add_subparsers(dest='action')
 
     ls_action = actions.add_parser('list', aliases=['ls'], help='list subtasks of the active task')
-
-    cd_action = actions.add_parser('cd', help='change the current active task')
-    cd_action.add_argument('task')
+    ls_action.add_argument('task', help='specify the active task')
 
     add_action = actions.add_parser('add')
     add_action.add_argument('name')
