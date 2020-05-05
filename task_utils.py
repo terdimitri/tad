@@ -30,3 +30,12 @@ def subtask_names(task):
     """list the names of all subtasks of the given task"""
     for subtask in subtasks(task):
         yield subtask.basename()
+
+def is_complete(task):
+    """Check if task is complete"""
+    try:
+        if os.path.getsize(os.path.join(task, 'COMPLETED')) > 0:
+            return True
+    except OSError:
+        pass
+    return False
