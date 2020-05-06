@@ -2,8 +2,6 @@
 """An application for storing and managing tasks in a hierarchal manner."""
 import argparse
 import task_utils
-import subprocess
-import os
 
 def add(args):
     task_utils.add_task(args.name)
@@ -17,11 +15,7 @@ def done(args):
     task_utils.complete_task(args.task)
 
 def edit(args):
-    try:
-        editor = os.environ['EDITOR']
-    except KeyError:
-        editor = 'vim'
-    subprocess.call([editor, args.attribute.upper()])
+    task_utils.edit_attribute(args.attribute)
 
 
 def main():
