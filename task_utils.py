@@ -57,7 +57,7 @@ def edit_attribute(attribute, task='./', create=False):
     except KeyError:
         editor = 'vi'
     if not(create or os.path.exists(attribute)):
-        raise FileNotFoundError('the attribute does not exist')
+        raise FileNotFoundError(f'the attribute {attribute} does not exist')
     subprocess.call([editor, attribute])
 
 def write_attribte(text, attribute, task='./'):

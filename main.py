@@ -45,7 +45,7 @@ def done(args):
     task_utils.complete_task(args.task)
 
 def edit(args):
-    task_utils.edit_attribute(args.attribute, create=args.create)
+    task_utils.edit_attribute(args.attribute, task=args.task, create=args.create)
 
 def main():
     """the current task is stored either in an environment variable or in the
@@ -80,6 +80,8 @@ def main():
 
     edit_action = actions.add_parser('edit',
             help='change an attribute of the current task')
+    edit_action.add_argument('task', nargs='?', const='./',
+            help='The task which you would like to edit')
     edit_action.add_argument('attribute',
             help='the attibute you would like to change')
     edit_action.add_argument('-c', '--create', action='store_true',
