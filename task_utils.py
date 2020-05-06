@@ -2,6 +2,7 @@
 on the current working directory.
 """
 import os
+import subprocess
 import datetime
 
 def add_task(name, parent_task='./', **kwargs):
@@ -44,3 +45,13 @@ def is_done(task):
     except OSError:
         pass
     return False
+
+def edit_attribute(attribute, task='./'):
+    """Open a given attribute of a task in an editor"""
+    attribute = os.path.join(task, attribute.upper())
+    try:
+        editor = os.environ['EDITOR']
+    except KeyError:
+        editor = 'vi'
+    if os.path.exists(attribute):
+        subprocess.call([editor, attribute])

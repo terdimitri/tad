@@ -2,8 +2,6 @@
 """An application for storing and managing tasks in a hierarchal manner."""
 import argparse
 import task_utils
-import subprocess
-import os
 
 COLORS = {
         'red': '\u001b[31m',
@@ -33,11 +31,7 @@ def done(args):
     task_utils.complete_task(args.task)
 
 def edit(args):
-    try:
-        editor = os.environ['EDITOR']
-    except KeyError:
-        editor = 'vim'
-    subprocess.call([editor, args.attribute.upper()])
+    task_utils.edit_attribute(args.attribute)
 
 
 def main():
