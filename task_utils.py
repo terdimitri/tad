@@ -29,7 +29,7 @@ def subtasks(task):
 def subtask_names(task):
     """List the names of all subtasks of the given task"""
     for subtask in subtasks(task):
-        yield subtask.basename()
+        yield os.path.basename(subtask)
 
 def is_done(task):
     """Check if task is done"""
