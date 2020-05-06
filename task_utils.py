@@ -20,21 +20,23 @@ def complete_task(task):
     with open(os.path.join(task, 'DONE'), 'w') as file:
         file.write(f'Completed on {datetime.datetime.now().isoformat()}')
 
+def task_name(task):
+    """Return only the name of the given task"""
+    return os.path.basename(task)
+
+def task_description(task):
+    """Return the first line of the description of the task"""
+    try:
+        with open(os.path.join(task, 'DESCRIPTION')) as file:
+            return file.readline().rstrip()
+    except FileNotFoundError:
+        return ''
+
 def subtasks(task):
     """List all subtasks of the given task."""
     for subtask in os.listdir(task):
         if os.path.isdir(os.path.join(task, subtask)):
             yield os.path.join(task, subtask)
-
-def subtask_names(task):
-    """List the names of all subtasks of the given task"""
-    for subtask in subtasks(task):
-        yield os.path.basename(subtask)
-
-def subtask_summary(task):
-    """Yield name, completion status of subtasks"""
-    for subtask in subtasks(task):
-        yield os.path.basename(subtask), is_done(subtask)
 
 def is_done(task):
     """Check if task is done"""
