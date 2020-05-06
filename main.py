@@ -33,7 +33,7 @@ def ls(args):
         return
 
     for subtask in task_utils.subtasks(task):
-        is_done = task_utils.is_done(task)
+        is_done = task_utils.is_done(subtask)
         entry = '[' + ('X' if is_done else ' ') + '] '
         entry += COLORS['green'] if is_done else COLORS['blue'] + COLORS['bold']
         entry += task_utils.task_name(subtask).ljust(padding)
