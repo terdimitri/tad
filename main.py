@@ -22,14 +22,16 @@ def add(args):
 
 def ls(args):
     task = './' if args.task is None else args.task
-    padding = 2 + max(len(name) for name in task_utils.subtask_names(task))
+    padding = 2 + max(len(task_utils.task_name(tsk))
+            for tsk in task_utils.subtasks(task))
 
-    for name, is_done in task_utils.subtask_summary(task):
+    for subtask in task_utils.subtasks(task):
+        is_done = task_utils.is_done(task)
         entry = '[' + ('X' if is_done else ' ') + '] '
         entry += COLORS['green'] if is_done else COLORS['blue'] + COLORS['bold']
-        entry += name.ljust(padding)
+        entry += task_utils.task_name(subtask).ljust(padding)
         entry += COLORS['reset']
-        entry += 'this the placeholder description'
+        entry += task_utils.task_description(task)
         print(entry)
 
 def done(args):
