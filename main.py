@@ -29,7 +29,7 @@ def ls(args):
         entry += COLORS['green'] if is_done else COLORS['blue'] + COLORS['bold']
         entry += task_utils.task_name(subtask).ljust(padding)
         entry += COLORS['reset']
-        entry += task_utils.task_description(task)
+        entry += task_utils.task_description(subtask)
         print(entry)
 
 def done(args):
