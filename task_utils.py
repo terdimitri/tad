@@ -31,6 +31,11 @@ def subtask_names(task):
     for subtask in subtasks(task):
         yield os.path.basename(subtask)
 
+def subtask_summary(task):
+    """Yield name, completion status of subtasks"""
+    for subtask in subtasks(task):
+        yield os.path.basename(subtask), is_done(subtask)
+
 def is_done(task):
     """Check if task is done"""
     try:

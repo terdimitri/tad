@@ -5,13 +5,29 @@ import task_utils
 import subprocess
 import os
 
+COLORS = {
+        'red': '\u001b[31m',
+        'green': '\u001b[32m',
+        'yellow': '\u001b[33m',
+        'blue': '\u001b[34m',
+        'magneta': '\u001b[35m',
+        'cyan': '\u001b[36m',
+        'white': '\u001b[37m',
+        'bold': '\u001b[1m',
+        'reset': '\u001b[0m',
+        }
+
 def add(args):
     task_utils.add_task(args.name)
 
 def ls(args):
+    default_color = COLORS['blue'] + COLORS['bold']
+    done_color = COLORS['green']
     task = './' if args.task is None else args.task
-    for name in task_utils.subtask_names(task):
-        print(name)
+    for name, is_done in task_utils.subtask_summary(task):
+        print('[', 'X' if is_done else ' ', '] ',
+                done_color if is_done else default_color,
+                name, COLORS['reset'], sep='')
 
 def done(args):
     task_utils.complete_task(args.task)
