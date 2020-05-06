@@ -2,27 +2,50 @@
 """An application for storing and managing tasks in a hierarchal manner."""
 import argparse
 import task_utils
-import subprocess
-import os
+
+COLORS = {
+        'red': '\u001b[31m',
+        'green': '\u001b[32m',
+        'yellow': '\u001b[33m',
+        'blue': '\u001b[34m',
+        'magneta': '\u001b[35m',
+        'cyan': '\u001b[36m',
+        'white': '\u001b[37m',
+        'bold': '\u001b[1m',
+        'reset': '\u001b[0m',
+        }
 
 def add(args):
-    task_utils.add_task(args.name)
+    task = task_utils.add_task(args.name)
+    if args.description is not None:
+        if args.description:
+            task_utils.write_attribte(args.description + '\n', 'DESCRIPTION', task)
+        else:
+            task_utils.edit_attribute('DESCRIPTION', task=task, create=True)
 
 def ls(args):
     task = './' if args.task is None else args.task
-    for name in task_utils.subtask_names(task):
-        print(name)
+    try:
+        padding = 2 + max(len(task_utils.task_name(tsk))
+                          for tsk in task_utils.subtasks(task))
+    except ValueError:
+        # no subtasks
+        return
+
+    for subtask in task_utils.subtasks(task):
+        is_done = task_utils.is_done(subtask)
+        entry = '[' + ('X' if is_done else ' ') + '] '
+        entry += COLORS['green'] if is_done else COLORS['blue'] + COLORS['bold']
+        entry += task_utils.task_name(subtask).ljust(padding)
+        entry += COLORS['reset']
+        entry += task_utils.task_description(subtask)
+        print(entry)
 
 def done(args):
     task_utils.complete_task(args.task)
 
 def edit(args):
-    try:
-        editor = os.environ['EDITOR']
-    except KeyError:
-        editor = 'vim'
-    subprocess.call([editor, args.attribute.upper()])
-
+    task_utils.edit_attribute(args.attribute, create=args.create)
 
 def main():
     """the current task is stored either in an environment variable or in the
@@ -41,7 +64,7 @@ def main():
             help='Add a task')
     add_action.add_argument('name',
             help='The name of the task')
-    add_action.add_argument('--description',
+    add_action.add_argument('-d', '--description', nargs='?', const='',
             help='The description of the task')
     add_action.add_argument('--due-date',
             help='The due date of the task in iso format')
@@ -59,6 +82,8 @@ def main():
             help='change an attribute of the current task')
     edit_action.add_argument('attribute',
             help='the attibute you would like to change')
+    edit_action.add_argument('-c', '--create', action='store_true',
+            help='create the attribute if it does not exist')
     edit_action.set_defaults(func=edit)
 
     args = parser.parse_args()

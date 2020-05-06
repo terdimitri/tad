@@ -2,6 +2,7 @@
 on the current working directory.
 """
 import os
+import subprocess
 import datetime
 
 def add_task(name, parent_task='./', **kwargs):
@@ -12,6 +13,7 @@ def add_task(name, parent_task='./', **kwargs):
         with open(os.path.join(location, key.upper()), 'w') as file:
             file.write(kwargs[key])
     os.mknod(os.path.join(location, 'DONE'))
+    return location
 
 def complete_task(task):
     """Mark task as done. Lables the finished task with the completion
@@ -20,16 +22,23 @@ def complete_task(task):
     with open(os.path.join(task, 'DONE'), 'w') as file:
         file.write(f'Completed on {datetime.datetime.now().isoformat()}')
 
+def task_name(task):
+    """Return only the name of the given task"""
+    return os.path.basename(task)
+
+def task_description(task):
+    """Return the first line of the description of the task"""
+    try:
+        with open(os.path.join(task, 'DESCRIPTION')) as file:
+            return file.readline().rstrip()
+    except FileNotFoundError:
+        return ''
+
 def subtasks(task):
     """List all subtasks of the given task."""
     for subtask in os.listdir(task):
         if os.path.isdir(os.path.join(task, subtask)):
             yield os.path.join(task, subtask)
-
-def subtask_names(task):
-    """List the names of all subtasks of the given task"""
-    for subtask in subtasks(task):
-        yield os.path.basename(subtask)
 
 def is_done(task):
     """Check if task is done"""
@@ -39,3 +48,20 @@ def is_done(task):
     except OSError:
         pass
     return False
+
+def edit_attribute(attribute, task='./', create=False):
+    """Open a given attribute of a task in an editor"""
+    attribute = os.path.join(task, attribute.upper())
+    try:
+        editor = os.environ['EDITOR']
+    except KeyError:
+        editor = 'vi'
+    if not(create or os.path.exists(attribute)):
+        raise FileNotFoundError('the attribute does not exist')
+    subprocess.call([editor, attribute])
+
+def write_attribte(text, attribute, task='./'):
+    """Write the given text to the attribute"""
+    attribute = os.path.join(task, attribute)
+    with open(attribute, 'w') as file:
+        file.write(text+'\n')
