@@ -45,7 +45,15 @@ def done(args):
     task_utils.complete_task(args.task)
 
 def edit(args):
-    task_utils.edit_attribute(args.attribute, task=args.task, create=args.create)
+    if args.fuzzy and args.create:
+        print('Cannot create and fuzzy find an attribute. Exiting.')
+        return
+    task_utils.edit_attribute(
+                args.attribute,
+                task=args.task,
+                create=args.create,
+                fuzzy=args.fuzzy
+            )
 
 def main():
     """the current task is stored either in an environment variable or in the
@@ -86,6 +94,8 @@ def main():
             help='the attibute you would like to change')
     edit_action.add_argument('-c', '--create', action='store_true',
             help='create the attribute if it does not exist')
+    edit_action.add_argument('-f', '--fuzzy', action='store_true',
+            help='use a fuzzy search for the name of the attribute')
     edit_action.set_defaults(func=edit)
 
     args = parser.parse_args()

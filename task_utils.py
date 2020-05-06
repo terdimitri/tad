@@ -49,8 +49,13 @@ def is_done(task):
         pass
     return False
 
-def edit_attribute(attribute, task='./', create=False):
+def edit_attribute(attribute, task='./', create=False, fuzzy=False):
     """Open a given attribute of a task in an editor"""
+    if fuzzy:
+        attribute_options = [attr for attr in os.listdir(task)
+                             if os.path.isfile(os.path.join(task, attr))]
+        attribute = fuzzy_find(attribute.upper(), attribute_options)
+
     attribute = os.path.join(task, attribute.upper())
     try:
         editor = os.environ['EDITOR']
@@ -65,3 +70,21 @@ def write_attribte(text, attribute, task='./'):
     attribute = os.path.join(task, attribute)
     with open(attribute, 'w') as file:
         file.write(text+'\n')
+
+def longest_common_substring(str1, str2):
+    """return the length of the longest longest common substring of the given
+    strings
+    """
+    lcs = [[0] * (len(str2) + 1) for _ in range(len(str1) + 1)]
+    for i, c1 in enumerate(str1):
+        for j, c2 in enumerate(str2):
+            if c1 == c2:
+                lcs[i+1][j+1] = lcs[i][j] + 1
+            else:
+                lcs[i+1][j+1] = max(lcs[i][j+1], lcs[i+1][j])
+    return lcs[-1][-1]
+
+def fuzzy_find(search_string, options):
+    """Find the option closest to the search string"""
+    return max(options,
+               key=lambda s: longest_common_substring(search_string, s))
