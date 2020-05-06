@@ -21,13 +21,16 @@ def add(args):
     task_utils.add_task(args.name)
 
 def ls(args):
-    default_color = COLORS['blue'] + COLORS['bold']
-    done_color = COLORS['green']
     task = './' if args.task is None else args.task
+    padding = 2 + max(len(name) for name in task_utils.subtask_names(task))
+
     for name, is_done in task_utils.subtask_summary(task):
-        print('[', 'X' if is_done else ' ', '] ',
-                done_color if is_done else default_color,
-                name, COLORS['reset'], sep='')
+        entry = '[' + ('X' if is_done else ' ') + '] '
+        entry += COLORS['green'] if is_done else COLORS['blue'] + COLORS['bold']
+        entry += name.ljust(padding)
+        entry += COLORS['reset']
+        entry += 'this the placeholder description'
+        print(entry)
 
 def done(args):
     task_utils.complete_task(args.task)
@@ -57,7 +60,7 @@ def main():
             help='Add a task')
     add_action.add_argument('name',
             help='The name of the task')
-    add_action.add_argument('--description',
+    add_action.add_argument('-d', '--description',
             help='The description of the task')
     add_action.add_argument('--due-date',
             help='The due date of the task in iso format')
