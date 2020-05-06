@@ -13,6 +13,7 @@ def add_task(name, parent_task='./', **kwargs):
         with open(os.path.join(location, key.upper()), 'w') as file:
             file.write(kwargs[key])
     os.mknod(os.path.join(location, 'DONE'))
+    return location
 
 def complete_task(task):
     """Mark task as done. Lables the finished task with the completion
@@ -58,3 +59,9 @@ def edit_attribute(attribute, task='./', create=False):
     if not(create or os.path.exists(attribute)):
         raise FileNotFoundError('the attribute does not exist')
     subprocess.call([editor, attribute])
+
+def write_attribte(text, attribute, task='./'):
+    """Write the given text to the attribute"""
+    attribute = os.path.join(task, attribute)
+    with open(attribute, 'w') as file:
+        file.write(text+'\n')

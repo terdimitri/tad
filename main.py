@@ -16,12 +16,21 @@ COLORS = {
         }
 
 def add(args):
-    task_utils.add_task(args.name)
+    task = task_utils.add_task(args.name)
+    if args.description is not None:
+        if args.description:
+            task_utils.write_attribte(args.description + '\n', 'DESCRIPTION', task)
+        else:
+            task_utils.edit_attribute('DESCRIPTION', task=task, create=True)
 
 def ls(args):
     task = './' if args.task is None else args.task
-    padding = 2 + max(len(task_utils.task_name(tsk))
-            for tsk in task_utils.subtasks(task))
+    try:
+        padding = 2 + max(len(task_utils.task_name(tsk))
+                          for tsk in task_utils.subtasks(task))
+    except ValueError:
+        # no subtasks
+        return
 
     for subtask in task_utils.subtasks(task):
         is_done = task_utils.is_done(task)
@@ -55,7 +64,7 @@ def main():
             help='Add a task')
     add_action.add_argument('name',
             help='The name of the task')
-    add_action.add_argument('-d', '--description',
+    add_action.add_argument('-d', '--description', nargs='?', const='',
             help='The description of the task')
     add_action.add_argument('--due-date',
             help='The due date of the task in iso format')
