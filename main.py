@@ -3,18 +3,6 @@
 import argparse
 import task_utils
 
-COLORS = {
-        'red': '\u001b[31m',
-        'green': '\u001b[32m',
-        'yellow': '\u001b[33m',
-        'blue': '\u001b[34m',
-        'magneta': '\u001b[35m',
-        'cyan': '\u001b[36m',
-        'white': '\u001b[37m',
-        'bold': '\u001b[1m',
-        'reset': '\u001b[0m',
-        }
-
 def add(args):
     task = task_utils.add_task(args.name)
     if args.description is not None:
@@ -24,22 +12,12 @@ def add(args):
             task_utils.edit_attribute('DESCRIPTION', task=task, create=True)
 
 def ls(args):
-    task = './' if args.task is None else args.task
-    try:
-        padding = 2 + max(len(task_utils.task_name(tsk))
-                          for tsk in task_utils.subtasks(task))
-    except ValueError:
-        # no subtasks
-        return
+    for line in task_utils.ls_lines(args.task):
+        print(line)
 
-    for subtask in task_utils.subtasks(task):
-        is_done = task_utils.is_done(subtask)
-        entry = '[' + ('X' if is_done else ' ') + '] '
-        entry += COLORS['green'] if is_done else COLORS['blue'] + COLORS['bold']
-        entry += task_utils.task_name(subtask).ljust(padding)
-        entry += COLORS['reset']
-        entry += task_utils.task_description(subtask)
-        print(entry)
+def tree(args):
+    for line in task_utils.tree_lines(args.task):
+        print(line)
 
 def done(args):
     task_utils.complete_task(args.task)
@@ -64,9 +42,15 @@ def main():
 
     ls_action = actions.add_parser('list', aliases=['ls'],
             help='list subtasks of the active task')
-    ls_action.add_argument('task', nargs='?',
+    ls_action.add_argument('task', nargs='?', default='./',
             help='specify the active task')
     ls_action.set_defaults(func=ls)
+
+    tree_action = actions.add_parser('tree',
+            help='print a tree of the active task')
+    tree_action.add_argument('task', nargs='?', default='./',
+            help='specify the active task')
+    tree_action.set_defaults(func=tree)
 
     add_action = actions.add_parser('add',
             help='Add a task')
