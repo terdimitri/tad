@@ -12,12 +12,12 @@ def add(args):
             task_utils.edit_attribute('DESCRIPTION', task=task, create=True)
 
 def ls(args):
-    task = './' if args.task is None else args.task
-    for line in task_utils.ls_lines(task):
+    for line in task_utils.ls_lines(args.task):
         print(line)
 
 def tree(args):
-    pass
+    for line in task_utils.tree_lines(args.task):
+        print(line)
 
 def done(args):
     task_utils.complete_task(args.task)
@@ -45,6 +45,12 @@ def main():
     ls_action.add_argument('task', nargs='?', default='./',
             help='specify the active task')
     ls_action.set_defaults(func=ls)
+
+    tree_action = actions.add_parser('tree',
+            help='print a tree of the active task')
+    tree_action.add_argument('task', nargs='?', default='./',
+            help='specify the active task')
+    tree_action.set_defaults(func=tree)
 
     add_action = actions.add_parser('add',
             help='Add a task')

@@ -35,7 +35,7 @@ def complete_task(task):
 
 def task_name(task):
     """Return only the name of the given task"""
-    return os.path.basename(task)
+    return os.path.basename(os.path.abspath(task))
 
 def task_description(task):
     """Return the first line of the description of the task"""
@@ -119,5 +119,9 @@ def ls_lines(task):
     for subtask in subtasks(task):
         yield format_task_line(subtask, padding=maxlen)
 
-def tree_lines(task):
-    """Return formatted lines that whatever idk"""
+def tree_lines(task, indent='    '):
+    """Return formatted lines that represent the tree of tasks"""
+    yield format_task_line(task)
+    for subtask in subtasks(task):
+        for line in tree_lines(subtask):
+            yield indent + line
