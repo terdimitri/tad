@@ -3,7 +3,7 @@
     tad list [<task>]
     tad tree [<task>]
     tad add <task> [-d [<description>]]
-    tad done <task>
+    tad done [-u] <task>
     tad edit [<task>] [-c | -f] <attribute>
     tad -h | --help
 
@@ -11,11 +11,13 @@ Create and manage tasks.
 
 Options:
     -h, --help         Show this message and exit
-for add
+add
     -d, --description
                        Set description of the task. If description not given,
                        open an editor.
-for edit
+done
+    -u, --undone       Mark a task as incomplete
+edit
     -c, --create       Create the attribut if it does not exit
     -f, --fuzzy        Fuzzy find for an existing attribute
     <attribute>        The attribute to edit
@@ -33,7 +35,7 @@ def main():
     if arguments['list']:
         for line in task_utils.ls_lines(arguments['<task>']):
             print(line)
-        
+
     elif arguments['tree']:
         for line in task_utils.tree_lines(arguments['<task>']):
             print(line)
@@ -48,7 +50,10 @@ def main():
                 task_utils.edit_attribute('DESCRIPTION', task=task, create=True)
 
     elif arguments['done']:
-        task_utils.complete_task(arguments['<task>'])
+        if arguments['--undone']:
+            task_utils.uncomplete_task(arguments['<task>'])
+        else:
+            task_utils.complete_task(arguments['<task>'])
 
     elif arguments['edit']:
         task_utils.edit_attribute(
