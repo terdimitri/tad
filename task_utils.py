@@ -5,6 +5,17 @@ import os
 import subprocess
 import datetime
 
+class Colors:
+    RED = '\u001b[31m'
+    GREEN = '\u001b[32m'
+    YELLOW = '\u001b[33m'
+    BLUE = '\u001b[34m'
+    MAGNETA = '\u001b[35m'
+    CYAN = '\u001b[36m'
+    WHITE = '\u001b[37m'
+    BOLD = '\u001b[1m'
+    RESET = '\u001b[0m'
+
 def add_task(name, parent_task='./', **kwargs):
     """Create a task as a subtask of parent_task"""
     location = os.path.join(parent_task, name)
@@ -88,3 +99,21 @@ def fuzzy_find(search_string, options):
     """Find the option closest to the search string"""
     return max(options,
                key=lambda s: longest_common_substring(search_string, s))
+
+
+def formatted_subtask_lines(task):
+    """Return a list of nicely formatted lines listing all subtasks of the
+    given task with indicators for the completion status
+    """
+    try:
+        maxlen = 2 + max(len(task_name(subtask)) for subtask in subtasks(task))
+    except ValueError:
+        # no subtasks
+        return
+    for subtask in subtasks(task):
+        name = task_name(subtask)
+        if is_done(subtask):
+            line = f'[X] {Colors.GREEN}{name.ljust(maxlen+2)}{Colors.RESET}'
+        else:
+            line = f'[ ] {Colors.BLUE}{Colors.BOLD}{name.ljust(maxlen+2)}{Colors.RESET}'
+        yield line
