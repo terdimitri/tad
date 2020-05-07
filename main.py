@@ -7,23 +7,22 @@
     tad edit [<task>] [-c | -f] <attribute>
     tad -h | --help
 
+Create and manage tasks.
+
 Options:
-    list               List the tasks
-    tree               List tasks in a tree
-    add                Add a task
-    done               Mark a task as done
-    edit               Edit an attribue of a task
-    <task>             The task on which to operate [default: './']
-    -d, --description  Specify the description of the task
-    <description>      The description of the task, if not given opens an editor
+    -h, --help         Show this message and exit
+for add
+    -d, --description
+                       Set description of the task. If description not given,
+                       open an editor.
+for edit
     -c, --create       Create the attribut if it does not exit
     -f, --fuzzy        Fuzzy find for an existing attribute
     <attribute>        The attribute to edit
-    -h, --help         Print this message
 """
+
 import docopt
 import task_utils
-
 
 def main():
     """le program"""
