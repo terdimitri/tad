@@ -100,20 +100,24 @@ def fuzzy_find(search_string, options):
     return max(options,
                key=lambda s: longest_common_substring(search_string, s))
 
+def format_task_line(task, padding=0):
+    """Return a formatted string representing the task and its state"""
+    name = task_name(task)
+    if is_done(task):
+        return f'[X] {Colors.GREEN}{name.ljust(padding)}{Colors.RESET}  {task_description(task)}'
+    return f'[ ] {Colors.BLUE}{Colors.BOLD}{name.ljust(padding)}{Colors.RESET}  {task_description(task)}'
 
-def formatted_subtask_lines(task):
+def ls_lines(task):
     """Return a list of nicely formatted lines listing all subtasks of the
     given task with indicators for the completion status
     """
     try:
-        maxlen = 2 + max(len(task_name(subtask)) for subtask in subtasks(task))
+        maxlen = max(len(task_name(subtask)) for subtask in subtasks(task))
     except ValueError:
         # no subtasks
         return
     for subtask in subtasks(task):
-        name = task_name(subtask)
-        if is_done(subtask):
-            line = f'[X] {Colors.GREEN}{name.ljust(maxlen+2)}{Colors.RESET}'
-        else:
-            line = f'[ ] {Colors.BLUE}{Colors.BOLD}{name.ljust(maxlen+2)}{Colors.RESET}'
-        yield line
+        yield format_task_line(subtask, padding=maxlen)
+
+def tree_lines(task):
+    """Return formatted lines that whatever idk"""

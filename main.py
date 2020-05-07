@@ -13,7 +13,7 @@ def add(args):
 
 def ls(args):
     task = './' if args.task is None else args.task
-    for line in task_utils.formatted_subtask_lines(task):
+    for line in task_utils.ls_lines(task):
         print(line)
 
 def tree(args):
