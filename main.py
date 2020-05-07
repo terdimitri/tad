@@ -66,7 +66,7 @@ def main():
 
     edit_action = actions.add_parser('edit',
             help='change an attribute of the current task')
-    edit_action.add_argument('task', nargs='?', const='./',
+    edit_action.add_argument('task', nargs='?', default='./',
             help='The task which you would like to edit')
     edit_action.add_argument('attribute',
             help='the attibute you would like to change')
