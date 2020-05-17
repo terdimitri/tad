@@ -1,63 +1,51 @@
 #!/usr/bin/env python
 """Usage:
-    tad list [<task>]
-    tad tree [<task>]
-    tad add <task> [-d [<description>]]
-    tad done <task>
-    tad edit [<task>] [-c | -f] <attribute>
+    tad <command> [<args>...]
     tad -h | --help
 
-Options:
-    list               List the tasks
-    tree               List tasks in a tree
-    add                Add a task
-    done               Mark a task as done
-    edit               Edit an attribue of a task
-    <task>             The task on which to operate [default: './']
-    -d, --description  Specify the description of the task
-    <description>      The description of the task, if not given opens an editor
-    -c, --create       Create the attribut if it does not exit
-    -f, --fuzzy        Fuzzy find for an existing attribute
-    <attribute>        The attribute to edit
-    -h, --help         Print this message
-"""
-import docopt
-import task_utils
+Create and manage tasks.
 
+Commands:
+    list    List tasks
+    tree    Show task tree
+    add     Add a task
+    done    Mark a task as done
+    edit    Edit attributes of a task
+
+Options:
+    -h, --help         Show this message and exit
+"""
+
+import docopt
 
 def main():
     """le program"""
-    arguments = docopt.docopt(__doc__)
-    if arguments['<task>'] is None:
-        arguments['<task>'] = './'
+    args = docopt.docopt(__doc__,
+                         options_first=True)
+    argv = [args['<command>']] + args['<args>']
 
-    if arguments['list']:
-        for line in task_utils.ls_lines(arguments['<task>']):
-            print(line)
-        
-    elif arguments['tree']:
-        for line in task_utils.tree_lines(arguments['<task>']):
-            print(line)
+    if args['<command>'] == 'list':
+        import tad_list
+        tad_list.main(docopt.docopt(tad_list.__doc__, argv=argv))
 
-    elif arguments['add']:
-        task = task_utils.add_task(arguments['<task>'])
-        if arguments['--description']:
-            if arguments['<description>'] is not None:
-                task_utils.write_attribte(arguments['<description>']+'\n',
-                                          'DESCRIPTION', task)
-            else:
-                task_utils.edit_attribute('DESCRIPTION', task=task, create=True)
+    elif args['<command>'] == 'tree':
+        import tad_tree
+        tad_tree.main(docopt.docopt(tad_tree.__doc__, argv=argv))
 
-    elif arguments['done']:
-        task_utils.complete_task(arguments['<task>'])
+    elif args['<command>'] == 'add':
+        import tad_add
+        tad_add.main(docopt.docopt(tad_add.__doc__, argv=argv))
 
-    elif arguments['edit']:
-        task_utils.edit_attribute(
-                arguments['<attribute>'],
-                task=arguments['<task>'],
-                create=arguments['--create'],
-                fuzzy=arguments['--fuzzy']
-            )
+    elif args['<command>'] == 'done':
+        import tad_done
+        tad_done.main(docopt.docopt(tad_done.__doc__, argv=argv))
+
+    elif args['<command>'] == 'edit':
+        import tad_edit
+        tad_edit.main(docopt.docopt(tad_edit.__doc__, argv=argv))
+    
+    else: print("tad: %r is not a valid command. See 'tad --help'."
+                % args['<command>'])
 
 if __name__ == '__main__':
     main()

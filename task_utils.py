@@ -32,6 +32,10 @@ def complete_task(task):
     """
     with open(os.path.join(task, 'DONE'), 'w') as file:
         file.write(f'Completed on {datetime.datetime.now().isoformat()}')
+def uncomplete_task(task):
+    """Mark task as not done."""
+    with open(os.path.join(task, 'DONE'), 'w'):
+        pass
 
 def task_name(task):
     """Return only the name of the given task"""
